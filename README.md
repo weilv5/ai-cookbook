@@ -1,34 +1,62 @@
-# AI Cookbook
+# 🍳 AI Cookbook
 
-各种 AI 相关实用脚本、工具和方案集合。
+> 用 AI 生成的程序员风格美食菜谱，给代码狗吃的正宗街头风味。
 
-## 📚 目录
+![GitHub last commit](https://img.shields.io/github/last-commit/weilv5/ai-cookbook)
+![GitHub repo size](https://img.shields.io/github/repo-size/weilv5/ai-cookbook)
+![License](https://img.shields.io/github/license/weilv5/ai-cookbook)
 
-| 目录 | 描述 |
+本仓库收集由 AI 辅助生成的程序员风格美食教程，用代码思维做菜，从环境配置到编译出锅，一键运行。
+
+---
+
+## 📚 菜谱目录
+
+### 🥪 早餐 Breakfast
+
+| 菜谱 | 难度 | 耗时 | 描述 |
+|------|------|------|------|
+| [🥞 程序员版正宗煎饼果子](./breakfast/jianbing-guozi-recipe.md) | ⭐ 入门 | 20min | 从环境依赖到出锅完整流程，带 Python 实现代码 |
+
+### 🔧 技术 Tech
+
+各种开发效率、代理配置技术方案
+
+| 项目 | 描述 |
 |------|------|
 | [cloudflare-openai-gemini-proxy](./cloudflare-openai-gemini-proxy/) | 基于 Cloudflare Workers 的 OpenAI/Gemini API 转发代理，解决国内访问问题 |
+| [volcengine](./volcengine/) | 火山引擎相关配置和示例 |
 
-## 🚀 快速开始
+---
 
-每个子目录都是独立项目，包含完整的 README 和部署指南。进入对应目录查看详情。
+## 💡 特色
 
-## 📖 详细说明
+- **程序员友好** → 用代码、注释、类、方法的思维讲解做菜流程，看完就能跑
+- **AI 辅助生成** → 由 AI 帮忙生成内容，人工审核味道正确性
+- **可运行** → 复制代码就能"编译"，按步骤走不会错
+- **可扩展** → 模块化设计，想加什么料自己加参数就行
 
-### cloudflare-openai-gemini-proxy
+---
 
-**特点：**
-- 基于 Cloudflare Workers，完全免费
-- 同时支持 OpenAI 和 Google Gemini API
-- 纯转发模式，API Key 由客户端携带，更安全
-- 支持 CORS，完美适配 OpenClaw 模型配置
-- 提供多种免费域名方案
+## 🚀 怎么用
 
-[查看详情 →](./cloudflare-openai-gemini-proxy/README.md)
+1. 找到你想吃的菜，打开对应 markdown 文件
+2. 按"环境准备"买好食材，相当于 `npm install`
+3. 按步骤一步步执行，出了错看 Debug 章节，相当于 `console.log`
+4. 出锅开吃，就是 `npm run build` 成功
+
+---
 
 ## 🤝 贡献
 
-欢迎提交 Issue 和 Pull Request。
+欢迎贡献更多程序员风格菜谱，提 PR 就行。要求：
+
+- 格式保持一致，代码+讲解配图
+- 味道本人亲测过好吃，别把奇怪的黑暗料理放进来
+- 分类放对目录，早餐放 breakfast，主食放 staple，等等
+
+---
 
 ## 📄 许可证
 
-MIT License
+MIT License — 随便用，就是别拿去卖钱。
