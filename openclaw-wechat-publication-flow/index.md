@@ -104,6 +104,15 @@ wechat-articles/
 - WECHAT_APP_SECRET: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
+**如何获取AppID和AppSecret：**
+
+1. 登录 [微信公众平台](https://mp.weixin.qq.com/)
+2. 进入 **设置与开发** → **基本配置**
+3. 可以看到开发者ID(AppID)，点击 "生成密钥" 得到AppSecret
+4. 官方文档：https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Get_access_token.html
+
+> 注意：需要公众号已开通开发者权限，个人公众号也可以免费开通。
+
 ### Seedream配图配置
 
 ```
@@ -112,6 +121,13 @@ wechat-articles/
 - API Key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 - Environment variable: VOLC_API_KEY
 ```
+
+**如何获取Seedream API Key：**
+
+1. 登录 [火山引擎控制台](https://console.volcengine.com/)
+2. 进入 **API 密钥管理** → 创建新的访问密钥
+3. 复制密钥填入配置即可
+4. 官方网站：https://www.volcengine.com/product/seedream
 
 ## 常用命令
 
