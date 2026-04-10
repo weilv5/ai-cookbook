@@ -26,6 +26,7 @@
 |------|------|
 | [cloudflare-openai-gemini-proxy](./cloudflare-openai-gemini-proxy/) | 基于 Cloudflare Workers 的 OpenAI/Gemini API 转发代理，解决国内访问问题 |
 | [volcengine](./volcengine/) | 火山引擎相关配置和示例 |
+| [openclaw-wechat-publication-flow](./openclaw-wechat-publication-flow/) | OpenClaw生成和发布微信公众号文章完整流程总结，带流程图 |
 
 ---
 
