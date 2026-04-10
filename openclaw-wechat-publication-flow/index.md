@@ -125,9 +125,10 @@ wechat-articles/
 **如何获取Seedream API Key：**
 
 1. 登录 [火山引擎控制台](https://console.volcengine.com/)
-2. 进入 **API 密钥管理** → 创建新的访问密钥
+2. 点击头像 → **API 密钥管理** → 创建新的访问密钥
 3. 复制密钥填入配置即可
-4. 官方网站：https://www.volcengine.com/product/seedream
+4. 产品首页：https://www.volcengine.com/product/doubao/image-generation
+> Seedream 是火山引擎豆包旗下的图片生成服务，需要先开通服务才能使用API。
 
 ## 常用命令
 
