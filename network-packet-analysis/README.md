@@ -20,6 +20,7 @@
 - [UDP 协议详解](#udp-协议详解)
 - [QUIC 协议详解](#quic-协议详解)
 - [QUIC 小报文分析](#quic-小报文分析)
+- [专有名词解释（ glossary）](#专有名词解释glossary)
 
 ---
 
@@ -1281,3 +1282,121 @@ HTTP/3 (QUIC)：
 *文档版本：v1.2*
 *更新时间：2026-04-21*
 *更新内容：新增 UDP 协议详解、QUIC 协议详解、QUIC 小报文分析*
+
+---
+
+## 专有名词解释（Glossary）
+
+### 网络基础
+
+| 术语 | 英文 | 解释 |
+|------|------|------|
+| **包/数据包** | Packet | 网络传输中的基本数据单元，包含了头部（地址信息）和负载（实际数据） |
+| **帧** | Frame | 数据链路层（二层）的数据包，包含了 MAC 地址等信息 |
+| **段** | Segment | 传输层（四层）的数据包，TCP 的数据单元称为段 |
+| **报文** | Datagram | 无连接协议（如 UDP）的数据单元，称为数据报 |
+| **负载** | Payload | 实际要传输的应用数据，不包括协议头 |
+| **MTU** | Maximum Transmission Unit | 单次传输的最大单元，以太网通常是 1500 字节 |
+| **MSS** | Maximum Segment Size | TCP 最大报文段大小，通常为 MTU - IP头 - TCP头 = 1460 字节 |
+| **RTT** | Round Trip Time | 往返时延，从发出去到收到确认的时间 |
+
+### TCP 相关
+
+| 术语 | 英文 | 解释 |
+|------|------|------|
+| **三次握手** | Three-way Handshake | TCP 建立连接的过程：SYN → SYN-ACK → ACK |
+| **四次挥手** | Four-way Termination | TCP 断开连接的过程：FIN → ACK → FIN → ACK |
+| **Seq** | Sequence Number | 序列号，标识数据的位置，便于排序和丢包检测 |
+| **ACK** | Acknowledgment Number | 确认号，表示已收到的字节数，下一个期望的序列号 |
+| **SYN** | Synchronize | 握手标志，请求建立连接 |
+| **FIN** | Finish | 挥手标志，请求关闭连接 |
+| **RST** | Reset | 重置标志，强制断开连接 |
+| **PSH** | Push | 推送标志，催促接收方应用层尽快读取数据 |
+| **URG** | Urgent | 紧急标志，标记紧急数据（很少用） |
+| **滑动窗口** | Sliding Window | TCP 的流量控制机制，限制未确认的发送数据量 |
+| **拥塞控制** | Congestion Control | TCP 防止网络过载的机制（慢启动、拥塞避免等） |
+| **超时重传** | Retransmission Timeout | 等待 ACK 超时后重发数据包 |
+| **快速重传** | Fast Retransmit | 收到 3 个重复 ACK 后立即重传丢失的包 |
+| **SACK** | Selective Acknowledgment | 选择性确认，只确认收到的部分包，支持部分重传 |
+| **Nagle 算法** | Nagle Algorithm | 合并小数据包，减少网络开销 |
+| **Keep-Alive** | TCP Keep-Alive | 保活机制，检测空闲连接是否仍然存活 |
+
+### UDP / QUIC 相关
+
+| 术语 | 英文 | 解释 |
+|------|------|------|
+| **无连接** | Connectionless | 不需要建立连接，直接发送数据（UDP 特性） |
+| **不可靠传输** | Unreliable Transmission | 不保证送达、不保证顺序、不重传（UDP 特性） |
+| **Connection ID** | CID | QUIC 中用于标识连接的 ID，支持连接迁移 |
+| **0-RTT** | 0 Round Trip Time | QUIC 建连后立即发送数据（基于缓存密钥） |
+| **1-RTT** | 1 Round Trip Time | QUIC 建连一次往返后开始传输 |
+| **Stream** | QUIC Stream | QUIC 中的独立数据流，多路复用互不影响 |
+| **Head-of-Line Blocking** | HOL Blocking | 队头阻塞，一个包丢导致后续全部等待 |
+| **AEAD** | Authenticated Encryption with Associated Data | 带关联数据的认证加密，QUIC 使用的加密模式 |
+| **Packet Number** | 包号 | QUIC 中每个包的唯一序号，用于确认和排序 |
+| **Frame** | 帧 | QUIC 协议中的逻辑数据单元（STREAM 帧、ACK 帧等） |
+
+### 协议相关
+
+| 术语 | 英文 | 解释 |
+|------|------|------|
+| **协议栈** | Protocol Stack | 网络协议的分层结构（TCP/IP 五层模型） |
+| **TCP/IP 五层** | TCP/IP 5 Layers | 物理层 → 数据链路层 → 网络层 → 传输层 → 应用层 |
+| **Socket** | Network Socket | 套接字，IP + 端口的组合，标识网络连接的一端 |
+| **端口** | Port | 16 位数字（0-65535），标识进程/服务（HTTP=80, HTTPS=443） |
+| **Socket Pair** | | 源 IP+源端口 + 目标 IP+目标端口，唯一标识一条连接 |
+| **隧道** | Tunnel | 通过一种协议传输另一种协议的技术（如 VPN） |
+| **代理** | Proxy | 介于客户端和服务器之间的中间层 |
+
+### Wireshark 相关
+
+| 术语 | 英文 | 解释 |
+|------|------|------|
+| **抓包过滤器** | Capture Filter | 抓包前设置，只抓符合条件的包（如 `port 80`） |
+| **显示过滤器** | Display Filter | 抓包后筛选，只显示符合条件的包（更灵活） |
+| **Follow TCP Stream** | | 跟随 TCP 流，查看完整的请求-响应对话 |
+| **Packet List** | | 数据包列表窗口，显示所有捕获的包概览 |
+| **Packet Details** | | 数据包详情窗口，选中包后显示各层协议详情 |
+| **Packet Bytes** | | 数据包字节窗口，显示原始十六进制数据 |
+| **Relative Seq** | | 相对序列号，Wireshark 自动调整，从 0 开始便于阅读 |
+| **Expert Info** | | 专家信息，Wireshark 自动标注的异常（重传、丢包等） |
+| **IO Graph** | | IO 图表，统计流量随时间变化的图形 |
+| **TCP StreamGraph** | | TCP 流图形，可看时间序列、RTT 统计等 |
+| **Decrypt** | | 解密，Wireshark 解密 TLS/HTTPS 流量（需要密钥） |
+| **Export** | | 导出，如导出对象（导出 HTTP 下载的文件） |
+
+### 安全相关
+
+| 术语 | 英文 | 解释 |
+|------|------|------|
+| **TLS** | Transport Layer Security | 传输层安全协议，用于加密网络通信 |
+| **SSL** | Secure Sockets Layer | SSL 是 TLS 的前身，现在已基本废弃 |
+| **握手** | Handshake | TLS 建立加密连接的过程（协商加密算法、交换密钥） |
+| **证书** | Certificate | 数字证书，用于验证服务器身份的电子文件 |
+| **对称加密** | Symmetric Encryption | 加密和解密用同一密钥（速度快），如 AES |
+| **非对称加密** | Asymmetric Encryption | 公钥加密、私钥解密（速度慢），如 RSA |
+| **DH/ECDH** | Diffie-Hellman / Elliptic Curve DH | 密钥交换算法，双方协商出共享密钥 |
+| **证书链** | Certificate Chain | 从根证书到服务器证书的信任链 |
+| **中间人攻击** | MITM Attack | 中间人拦截并篡改通信内容 |
+| **重放攻击** | Replay Attack | 攻击者重复发送之前截获的合法数据 |
+
+### 抓包分析场景
+
+| 术语 | 英文 | 解释 |
+|------|------|------|
+| **丢包** | Packet Loss | 网络传输中丢失的数据包 |
+| **延迟** | Latency | 数据从发送到接收的时间 |
+| **抖动** | Jitter | 延迟的变化幅度，抖动大意味着延迟不稳定 |
+| **带宽** | Bandwidth | 网络管道的最大传输能力 |
+| **吞吐量** | Throughput | 实际成功传输的数据量 |
+| **协议分析** | Protocol Analysis | 分析网络流量，理解协议的工作原理 |
+| **网络瓶颈** | Bottleneck | 限制整体性能的关键节点 |
+| **连接超时** | Connection Timeout | 建立连接时等待过长 |
+| **重传风暴** | Retransmission Storm | 大量重传导致网络拥塞恶化 |
+| **分片** | Fragmentation | 大数据包被拆分成多个小包（IP 层） |
+| **PMTUD** | Path MTU Discovery | 路径 MTU 发现，避免 IP 分片 |
+| **窗口收缩** | Window Shrink | 接收方窗口变小，可能表示缓冲区紧张 |
+| **Zero Window** | | 接收方窗口为 0，无法再接收数据 |
+| **Window Full** | | 发送方检测到对方窗口已满，停止发送 |
+
+---
