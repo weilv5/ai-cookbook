@@ -32,6 +32,7 @@
 | [quiche](./quiche/) | Cloudflare quiche 代码库详细功能性文档，分模块讲解功能分区、状态机、模块串联，从架构到流程完整梳理 |
 | [google-quiche](./google-quiche/) | Google QUICHE 代码详细功能性文档，源自 Chromium，分模块讲解功能分区、状态机、完整调用链 |
 | [cronet](./cronet/) | Google Cronet 网络库详细功能性文档，从架构、模块划分、QUIC集成到API完整梳理 |
+| [network-packet-analysis](./network-packet-analysis/) | 网络抓包分析入门指南，Wireshark 使用教程，三次握手四次挥手详解 |
 
 ---
 
