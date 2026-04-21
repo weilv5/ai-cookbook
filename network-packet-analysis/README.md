@@ -17,6 +17,9 @@
 - [深入理解 TCP 数据传输](#深入理解-tcp-数据传输)
 - [数据包重传机制](#数据包重传机制)
 - [数据分片与重组](#数据分片与重组)
+- [UDP 协议详解](#udp-协议详解)
+- [QUIC 协议详解](#quic-协议详解)
+- [QUIC 小报文分析](#quic-小报文分析)
 
 ---
 
@@ -889,3 +892,392 @@ RTT 稳定低 → 网络状态良好
 *更新时间：2026-04-21*
 *更新内容：新增 TCP 数据传输、重传机制、分片重组详解*
 *贡献者:AI-Cookbook Team*
+
+---
+
+## UDP 协议详解
+
+UDP（User Datagram Protocol）是"无连接"的传输层协议，特点就一个字：**快**。
+
+### TCP vs UDP 对比
+
+| 特性 | TCP | UDP |
+|------|-----|-----|
+| **连接方式** | 需先建立连接（三次握手） | 无连接，直接发 |
+| **可靠性** | 可靠，不丢包 | 不可靠，可能丢包 |
+| **顺序性** | 保证顺序 | 不保证顺序 |
+| **速度** | 相对慢 | 快 |
+| **流量控制** | 有（滑动窗口） | 无 |
+| **拥塞控制** | 有 | 无 |
+| **报文边界** | 字节流 | 保留报文边界 |
+| **头部大小** | 20-60 字节 | 8 字节 |
+
+### 为什么游戏、视频通话用 UDP？
+
+想象打视频电话：
+
+```
+TCP 方式：
+发音频包1 → 等确认 → 发音频包2 → 等确认 → 发音频包3 → 等确认...
+问题：等 ACK 的时间就是延迟！
+
+UDP 方式：
+发音频包1 → 发音频包2 → 发音频包3 → 发音频包4...
+不管对方收没收到，一直发
+问题：偶尔丢一帧问题不大，但卡在那等确认就真卡死了
+```
+
+### UDP 的使用场景
+
+| 场景 | 为什么用 UDP |
+|------|---------------|
+| **DNS 查询** | 就问一句答一句，丢了重问就行 |
+| **视频/直播** | 偶尔花屏比卡住强 |
+| **游戏同步** | 宁可偶尔卡一下不能动不动就卡死 |
+| **VoIP 电话** | 实时性 > 可靠性 |
+| **QUIC** | 现代 HTTP/3 的底层 |
+
+### UDP 头部结构
+
+```
+┌──────────┬──────────┬───────────────┐
+│  Source   │  Dest    │               │
+│   Port    │   Port   │    Length     │
+│  (2字节)  │  (2字节)  │    (2字节)    │
+├──────────┴──────────┴───────────────┤
+│              Checksum (2字节)         │
+├──────────────────────────────────────┤
+│           Payload (应用数据)          │
+└──────────────────────────────────────┘
+```
+
+### Wireshark 中的 UDP
+
+```
+过滤器: udp
+
+No.  Time     Source          Destination   Protocol  Length  Info
+1    0.000    192.168.1.100   8.8.8.8        DNS       59      Standard query A example.com
+2    0.015    8.8.8.8         192.168.1.100  DNS       131     Standard query response A 93.184.216.34
+```
+
+### UDP 详情解析
+
+```
+User Datagram Protocol
+    Src Port: 65342                   # 源端口（客户端随机选的）
+    Dst Port: 53                       # 目标端口（DNS 服务器）
+    Length: 39                         # UDP 头+数据总长度
+    Checksum: 0x4d47 [correct]         # 校验和
+
+Domain Name System (query)
+    Transaction ID: 0xabcd
+    Questions: 1
+    www.example.com
+        Type: A (Host Address)
+        Class: IN
+```
+
+### UDP 的"够用就好"哲学
+
+UDP 就干一件事：**把数据从一端送到另一端**，不保证、不确认、不重传。
+
+```
+发送方：发发发！
+接收方：收到收到收到（或者假装没收到）
+
+如果丢包了？
+- 应用自己决定怎么办
+- 重传？上层协议决定
+- 不管？也是上层决定
+```
+
+---
+
+## QUIC 协议详解
+
+QUIC（Quick UDP Internet Connections）是 Google 提的新协议，HTTP/3 的底层。
+
+### 为什么需要 QUIC？
+
+TCP 的问题：
+
+```
+建立 HTTP/2 连接：
+1. TCP 三次握手        → 1-2 RTT
+2. TLS 握手（1-RTT）  → 1-2 RTT
+3. HTTP 请求          → 终于可以发数据了！
+
+总耗时：2-3 RTT 才能开始干活！
+```
+
+QUIC 的解决：
+
+```
+建立 QUIC 连接：
+1. 一次握手搞定所有（连接 + TLS + 认证）
+
+总耗时：0-1 RTT 就能发数据！
+```
+
+### QUIC 的核心优势
+
+| 优势 | 说明 |
+|------|------|
+| **0-RTT / 1-RTT 建连** | 比 TCP+TLS 快 1-2 个往返 |
+| **连接迁移** | Wi-Fi 切 4G 不掉线（基于 Connection ID） |
+| **独立流控** | 多路复用不互相阻塞 |
+| **丢包只影响一个流** | HTTP/2 一个包丢影响所有流 |
+| **更好的拥塞控制** | 用户空间实现，迭代快 |
+
+### QUIC 握手过程
+
+```
+客户端                                          服务端
+   │
+   │  ──────── Initial (握手开始) ────────────────▶
+   │  ├─ Connection ID (客户端生成)
+   │  ├─ TLS ClientHello
+   │
+   │◀─────── Initial (服务端响应) ────────────────│
+   │  ├─ Connection ID (服务端生成)
+   │  ├─ TLS ServerHello
+   │
+   │  ──────── Handshake (加密握手) ──────────────▶
+   │
+   │◀─────── Handshake (完成) ────────────────────│
+   │
+   │  ═══════ 加密数据传输 ═════════════════════
+   │  ──────── 0-RTT Data (可选) ───────────────▶
+```
+
+### Wireshark 中的 QUIC
+
+```
+过滤器: quic
+
+No.  Time     Source          Destination   Protocol  Length  Info
+1    0.000    192.168.1.100   104.21.56.78  QUIC      1250   Initial, DCID=xxx... Crypto
+2    0.030    104.21.56.78    192.168.1.100 QUIC      1200   Initial, SCID=xxx... Crypto, HNDSHK
+3    0.050    192.168.1.100   104.21.56.78  QUIC      1100   Handshake, DCID=xxx... Crypto
+4    0.080    104.21.56.78    192.168.1.100 QUIC      1450   Handshake, SCID=xxx... Crypto
+5    0.100    192.168.1.100   104.21.56.78  QUIC      1450   1-RTT, DCID=xxx... STREAM
+```
+
+### QUIC 包类型
+
+| 包类型 | 说明 | Wireshark 标记 |
+|--------|------|----------------|
+| **Initial** | 建连第一个包，含 TLS ClientHello | `Initial` |
+| **Handshake** | 加密握手 | `Handshake` |
+| **0-RTT** | 基于缓存的快速建连 | `0-RTT` |
+| **1-RTT** | 正常数据传输 | `1-RTT` |
+| **Short Header** | 简化头，连接建立后使用 | `Short` |
+
+### QUIC 头部结构
+
+#### Long Header（建连时使用）
+
+```
+┌────────┬─────────────────┬───────────────┐
+│  类型   │  Connection ID  │  Packet No.   │
+│  1字节  │    变长         │  (1-4字节)    │
+├────────┴─────────────────┼───────────────┤
+│       加密负载            │   (加密)      │
+└──────────────────────────┴───────────────┘
+```
+
+#### Short Header（连接建立后）
+
+```
+┌────────┬─────────────────┬───────────────┐
+│  0x02   │  Connection ID  │  Packet No.   │
+│ (类型)  │    (可选)        │  (变长)       │
+├────────┴─────────────────┼───────────────┤
+│      Header Protection   │   加密负载    │
+│       (去除 1-2 字节)    │  + 16B AEAD   │
+└─────────────────────────┴───────────────┘
+```
+
+### QUIC Stream（多路复用）
+
+QUIC 的 Stream 是独立的，不互相影响：
+
+```
+Stream 1: GET /index.html      ──────────────────▶
+Stream 2: GET /style.css       ──────────────────▶
+Stream 3: GET /app.js          ──────────────────▶
+
+包丢了？
+Stream 1 丢了一个包 → 只影响 Stream 1
+Stream 2 和 Stream 3 继续跑，不受影响！
+
+对比 HTTP/2：
+一个 TCP 包丢了 → 所有 Stream 都等重传 → 全都卡住
+```
+
+---
+
+## QUIC 小报文分析
+
+QUIC 的一个亮点就是**小报文优化**，尤其 0-RTT 和 1-RTT 包可以非常小。
+
+### 什么算"小报文"？
+
+QUIC 的报文通常包含：
+
+| 组成部分 | 大小 |
+|----------|------|
+| Fixed Header | 1 字节 |
+| Connection ID | 0-20 字节 |
+| Packet Number | 1-4 字节 |
+| 加密负载 | 0+ 字节 |
+| AEAD 认证标签 | 16 字节 |
+
+**一个最小的 QUIC 包可能只有 20-30 字节！**
+
+### Initial 包（典型大小）
+
+```
+过滤器: quic.packet_type == INITIAL
+
+No.  Time     Length  Protocol  Info
+1    0.000    1250   QUIC      Initial, DCID=xxx...  # 含 TLS ClientHello (大)
+2    0.030    1200   QUIC      Initial, SCID=xxx...  # 含 TLS ServerHello (大)
+3    0.050    1100   QUIC      Handshake            # 含证书链 (大)
+
+后续的 1-RTT 包就小了：
+5    0.100    150    QUIC      1-RTT, Short Header  # 实际数据，少量加密开销
+6    0.110    145    QUIC      1-RTT, Short Header
+7    0.120    160    QUIC      1-RTT, Short Header
+```
+
+### 1-RTT 包的最小化
+
+连接建立后，QUIC 使用 Short Header，包可以非常小：
+
+```
+┌────────┬───────┬──────────┬──────────────┐
+│ 0x02   │ DCID  │  Pkt Num │   Encrypted  │
+│ (1B)   │(0-20B)│ (1-4B)   │  Payload     │
+│        │       │          │ + 16B AEAD   │
+└────────┴───────┴──────────┴──────────────┘
+
+一个 ACK 包可能只有：1 + 0 + 1 + 30 + 16 = ~48 字节
+一个 STREAM 数据包可能只有：1 + 0 + 1 + 100 + 16 = ~118 字节
+```
+
+### Wireshark 解析 1-RTT 包
+
+```
+过滤器: quic.payload
+
+No.  Time     Length  Info
+10   0.100    145     QUIC 1-RTT Short Header, STREAM Layer 4
+11   0.101    52      QUIC 1-RTT Short Header, ACK
+```
+
+### ACK 帧详解
+
+QUIC 的 ACK 比 TCP 更高效：
+
+```
+TCP ACK：
+就一个 Ack 字段，说"我收到了这个包"
+
+QUIC ACK：
+├─ Largest Acknowledged      # 最大确认包号
+├─ ACK Delay                 # 收到包到发 ACK 的延迟
+├─ ACK Range Count           # 确认范围数量
+├─ ECN Counts (可选)         # ECN 拥塞标记
+└─ ACK Ranges               # 具体的确认范围
+    ├─ Gap: 2                # 丢包：跳过 2 个包
+    └─ ACK Range: 10-15      # 确认 10 到 15 包
+```
+
+### 0-RTT 的小秘密
+
+0-RTT 允许在第一次握手时就发送数据（基于之前会话缓存的密钥）：
+
+```
+正常建连：
+ClientHello ──────────────────▶  (还没加密)
+                    ◀────────── ServerHello
+（这里还不能发业务数据）
+
+0-RTT 建连：
+ClientHello + 0-RTT Data ────▶  (用旧密钥加密的业务数据)
+                    ◀────────── ServerHello + 握手数据
+（这里已经能发业务数据了！）
+```
+
+**0-RTT 包的限制**：
+- 只能发送之前建立连接时用过的数据（不能是全新的）
+- 有被重放攻击的风险
+- 部分场景会禁用 0-RTT
+
+### 实际抓包看 0-RTT vs 1-RTT
+
+```
+过滤器: quic
+
+No.  Time     Type      Length  Info
+1    0.000    Initial   1250   第一次握手，Crypto + ClientHello
+2    0.030    Initial   1200   服务端响应，Crypto + ServerHello
+3    0.050    Handshake 1100   继续握手，证书链
+4    0.080    1-RTT     100    0-RTT Data (Short Header)
+                               # 这是 0-RTT 包，已经在发数据了！
+5    0.090    1-RTT     80     1-RTT，继续传输
+6    0.100    1-RTT     120    1-RTT，STREAM 数据
+```
+
+### QUIC 包大小 vs TCP+TLS
+
+| 协议 | 首个数据包的典型大小 |
+|------|--------------------|
+| TCP + TLS 1.3 | ~1300 字节（证书链大） |
+| QUIC Initial | ~1200 字节（也含证书） |
+| QUIC 1-RTT | **~150 字节**（去除握手开销） |
+| QUIC Short | **~50-200 字节**（轻量） |
+
+### 小报文优势：降低 Head-of-Line Blocking
+
+```
+HTTP/1.1：
+请求1 ───────────────────────────────────▶
+请求2 ───────────────────────────────────▶
+(每个请求独立连接，不阻塞)
+
+HTTP/2 (TCP)：
+请求1 ───────────────────────────────────▶
+请求2 ───────────────────────────────────▶
+           ↑
+      一个包丢了，两个请求都等
+
+HTTP/3 (QUIC)：
+请求1 Stream1 ─────────────────────────▶
+请求2 Stream2 ─────────────────────────▶
+           ↑
+      Stream2 的包丢了，只影响 Stream2
+      Stream1 继续跑，不阻塞
+```
+
+### 常见 QUIC 过滤器
+
+| 过滤器 | 说明 |
+|--------|------|
+| `quic` | 所有 QUIC 包 |
+| `quic.packet_type == INITIAL` | Initial 包 |
+| `quic.packet_type == HANDSHAKE` | Handshake 包 |
+| `quic.packet_type == 0RTT` | 0-RTT 数据包 |
+| `quic.packet_type == 1RTT` | 1-RTT 数据包 |
+| `quic.stream` | Stream 帧 |
+| `quic.frame.type == ACK` | ACK 帧 |
+| `quic.frame.type == STREAM` | STREAM 数据帧 |
+| `quic.frame.type == CRYPTO` | CRYPTO 握手帧 |
+
+---
+
+*文档版本：v1.2*
+*更新时间：2026-04-21*
+*更新内容：新增 UDP 协议详解、QUIC 协议详解、QUIC 小报文分析*
