@@ -1,42 +1,58 @@
 # 🍳 AI Cookbook
 
-> 用 AI 生成的程序员风格美食菜谱，给代码狗吃的正宗街头风味。
+> 给代码农写的 AI 时代工程师实战手册 —— 菜谱、通协议、跑模型的活，都在这里。
 
 ![GitHub last commit](https://img.shields.io/github/last-commit/weilv5/ai-cookbook)
 ![GitHub repo size](https://img.shields.io/github/repo-size/weilv5/ai-cookbook)
 ![License](https://img.shields.io/github/license/weilv5/ai-cookbook)
 
-本仓库收集由 AI 辅助生成的程序员风格美食教程，用代码思维做菜，从环境配置到编译出锅，一键运行。
+本仓库存放 AI 辅助生成的程序员实战内容 —— 从代码狗的早餐菜谱，到 QUIC/Cronet/SSL 这类硬核网络协议拆解，再到怎么把各种 LLM API 跑起来。统一风格：**像写代码一样写文档，复制就能跑**。
 
 ---
 
-## 📚 菜谱目录
+## 📚 目录
 
 ### 🥪 早餐 Breakfast
+
+程序员的胃也要照顾。
 
 | 菜谱 | 难度 | 耗时 | 描述 |
 |------|------|------|------|
 | [🥞 程序员版正宗煎饼果子](./breakfast/jianbing-guozi-recipe.md) | ⭐ 入门 | 20min | 从环境依赖到出锅完整流程，带 Python 实现代码 |
 
-### 🔧 技术 Tech
+### 🤖 AI & 大模型
 
-各种开发效率、代理配置技术方案
+怎么把各个大模型 API 用起来 —— 申请流程、价格对比、避坑指南。
 
 | 项目 | 描述 |
 |------|------|
+| [llm-api-apply-guide](./llm-api-apply-guide/) | 国内主流 LLM（通义千问 / GLM / Kimi / 豆包 / DeepSeek 等）API 申请流程、价格对比 |
+| [openclaw-wechat-publication-flow](./openclaw-wechat-publication-flow/) | 用 OpenClaw 生成并发布微信公众号文章完整流程总结，带流程图 |
+| [volcengine/openclaw-setup](./volcengine/openclaw-setup.md) | OpenClaw 接入火山方舟 Coding Plan 完整指南，含排错步骤 |
 | [cloudflare-openai-gemini-proxy](./cloudflare-openai-gemini-proxy/) | 基于 Cloudflare Workers 的 OpenAI/Gemini API 转发代理，解决国内访问问题 |
-| [volcengine](./volcengine/) | 火山引擎相关配置和示例 |
-| [openclaw-wechat-publication-flow](./openclaw-wechat-publication-flow/) | OpenClaw生成和发布微信公众号文章完整流程总结，带流程图 |
-| [llm-api-apply-guide](./llm-api-apply-guide/) | 国内各大LLM API申请和使用流程汇总，包含申请步骤、价格对比、OpenClaw配置示例 |
-| [ssl-network-request](./ssl-network-request/) | 网络请求过程中 SSL 相关知识详细总结，包含完整流程图，好理解不晦涩 |
-| [quiche](./quiche/) | Cloudflare quiche 代码库详细功能性文档，分模块讲解功能分区、状态机、模块串联，从架构到流程完整梳理 |
-| [google-quiche](./google-quiche/) | Google QUICHE 代码详细功能性文档，源自 Chromium，分模块讲解功能分区、状态机、完整调用链 |
-| [cronet](./cronet/) | Google Cronet 网络库详细功能性文档，从架构、模块划分、QUIC集成到API完整梳理 |
-| [network-packet-analysis](./network-packet-analysis/) | 网络抓包分析入门指南，Wireshark 使用教程，三次握手四次挥手详解 |
+
+### 🌐 网络协议 & 抓包
+
+把 HTTP/TCP/UDP/QUIC/TLS 这些东西拆开揉碎讲清楚。
+
+| 项目 | 描述 |
+|------|------|
+| [network-packet-analysis](./network-packet-analysis/) | 网络抓包入门指南，Wireshark 教程，三次握手/四次挥手/QUIC 全覆盖 |
+| [ssl-network-request](./ssl-network-request/) | SSL/TLS 握手过程详解、证书体系、性能优化、常见问题 |
+
+### ⚙️ 网络库源码解读
+
+Cloudflare quiche / Google QUICHE / Chromium Cronet 三件套，分模块逐字看。
+
+| 项目 | 描述 |
+|------|------|
+| [quiche](./quiche/) | Cloudflare quiche（Rust 实现的 QUIC/HTTP3 库）详细功能文档 |
+| [google-quiche](./google-quiche/) | Google QUICHE（Chromium 版）详细功能文档，分模块讲状态机和调用链 |
+| [cronet](./cronet/) | Google Cronet（Chromium 抽离的跨平台网络栈）架构 + 模块 + API 完整梳理 |
 
 ### 📝 随笔 Essays
 
-不写代码也能写的那些文字。风景、心情、凌晨四点的胡思乱想。
+不写代码也能写的那些文字。
 
 | 文章 | 描述 |
 |------|------|
@@ -46,32 +62,32 @@
 
 ## 💡 特色
 
-- **程序员友好** → 用代码、注释、类、方法的思维讲解做菜流程，看完就能跑
-- **AI 辅助生成** → 由 AI 帮忙生成内容，人工审核味道正确性
-- **可运行** → 复制代码就能"编译"，按步骤走不会错
-- **可扩展** → 模块化设计，想加什么料自己加参数就行
+- **程序员友好** → 用代码、注释、类、方法的思维组织内容，看完就能上手
+- **AI 辅助生成 + 人工审核** → AI 帮忙生成草稿，人工核验准确性
+- **可运行/可执行** → 命令和配置复制就能跑，错了有 Debug 章节兜底
+- **可扩展** → 模块化目录结构，想加什么内容按已有分类加就行
 
 ---
 
 ## 🚀 怎么用
 
-1. 找到你想吃的菜，打开对应 markdown 文件
-2. 按"环境准备"买好食材，相当于 `npm install`
-3. 按步骤一步步执行，出了错看 Debug 章节，相当于 `console.log`
-4. 出锅开吃，就是 `npm run build` 成功
+1. 先看一眼目录，挑你想看的主题（菜谱 / AI / 网络 / 源码拆解 / 随笔）
+2. 点进对应目录，按章节顺序读，每章一般都有「是什么 / 怎么做 / 出错了怎么办」
+3. 命令和配置示例直接复制就能跑，替换占位符就行
+4. 看完有想法就提 Issue / PR
 
 ---
 
 ## 🤝 贡献
 
-欢迎贡献更多程序员风格菜谱，提 PR 就行。要求：
+欢迎补充更多内容，提 PR 就行。要求：
 
-- 格式保持一致，代码+讲解配图
-- 味道本人亲测过好吃，别把奇怪的黑暗料理放进来
-- 分类放对目录，早餐放 breakfast，主食放 staple，等等
+- 风格一致：图文 + 命令行/代码示例，重要步骤配流程图
+- 内容自己核验过，别把没验证过的东西塞进来
+- 分类放对目录：菜谱放 `breakfast/`、AI 内容放对应目录、网络协议放对应目录、源码解读按项目分目录 `quiche/` `google-quiche/` `cronet/`
 
 ---
 
 ## 📄 许可证
 
-MIT License — 随便用，就是别拿去卖钱。
+MIT License — 随便用，别拿去卖钱就行。

@@ -36,7 +36,7 @@
 ```bash
 npm install -g @cloudflare/wrangler
 # 或
-yarn global add @cloudflare-wrangler
+yarn global add @cloudflare/wrangler
 ```
 
 #### 2. 登录 Cloudflare
@@ -50,7 +50,7 @@ wrangler login
 #### 3. 克隆或下载代码
 
 ```bash
-git clone https://github.com/你的用户名/ai-cookbook.git
+git clone https://github.com/weilv5/ai-cookbook.git
 cd ai-cookbook/cloudflare-openai-gemini-proxy
 ```
 

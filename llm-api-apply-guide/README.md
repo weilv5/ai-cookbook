@@ -254,7 +254,7 @@
       "apiKey": "your-ark-api-key",
       "model": "ep-xxx-endpoint"
     }
-  }
+  ]
 }
 ```
 
