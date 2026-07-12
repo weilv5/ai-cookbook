@@ -13,7 +13,12 @@ OpenClaw通过组合多个skill，可以实现从**主题输入 → AI生成文�
 | `wechat-publication-helper` | 文章发布助手，唤醒关键词"发布公众号"，引导输入主题，自动调用生成 | ✅ 可用 |
 | `wechat-publisher` | 一键发布Markdown到微信公众号草稿箱，基于wenyan-cli | ✅ 已配置 |
 | `seedream-image-for-openclaw` | 火山引擎Seedream生成配图 | ✅ 已配置 |
-| `wemp-operator` | 微信公众号自动化运营（采集热点、生成日报等） | ⚠️ 安装中 |
+
+### 可选扩展（不在主流程里）
+
+| Skill名称 | 作用 | 状态 |
+|-----------|------|------|
+| `wemp-operator` | 微信公众号自动化运营（采集热点、生成日报、定时推送） | 🧪 实验性 |
 
 ## 完整发布流程
 
