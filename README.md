@@ -34,6 +34,14 @@
 | [cronet](./cronet/) | Google Cronet 网络库详细功能性文档，从架构、模块划分、QUIC集成到API完整梳理 |
 | [network-packet-analysis](./network-packet-analysis/) | 网络抓包分析入门指南，Wireshark 使用教程，三次握手四次挥手详解 |
 
+### 📝 随笔 Essays
+
+不写代码也能写的那些文字。风景、心情、凌晨四点的胡思乱想。
+
+| 文章 | 描述 |
+|------|------|
+| [🌄 山雾散尽时](./essays/morning-mountain-fog.md) | 一份写给代码农的清晨登山说明书，凌晨四点上山看云海的那种执念 |
+
 ---
 
 ## 💡 特色
